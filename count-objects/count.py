@@ -1,6 +1,5 @@
 #! python3
 import rhinoscriptsyntax as rs
-import Rhino
 import csv
 
 def calculate_layer_stats():
@@ -37,11 +36,10 @@ def calculate_layer_stats():
                 if length:
                     total_length += length / (unit_conversion_factor)
             elif rs.IsMesh(obj):
-                area = rs.MeshArea(obj) #MeshAreaは配列の1番目でareaを返す
+                area = rs.MeshArea(obj)
                 if area:
                     total_area += area[1] / (unit_conversion_factor ** 2)
 
-        # 結果を保存
         layer_stats[layer] = {
             "total_area": total_area,
             "total_length": total_length,
@@ -49,14 +47,6 @@ def calculate_layer_stats():
         }
     
     save_to_csv(layer_stats)
-
-
-    # for layer, stats in layer_stats.items():
-    #     print(f"レイヤー: {layer}")
-    #     print(f"  面積合計: {stats['total_area']} m²")
-    #     print(f"  長さ合計: {stats['total_length']} m")
-    #     print(f"  個数: {stats['object_count']} 個")
-    #     print("-" * 30)
     
     return layer_stats
 
@@ -76,11 +66,11 @@ def save_to_csv(layer_stats):
             for layer, stats in layer_stats.items():
                 row = [
                     layer,
-                    f"{stats['total_area']:.2f}",  # 面積（小数点以下2桁にフォーマット）
-                    f"{stats['total_length']:.2f}",  # 長さ（小数点以下2桁にフォーマット）
-                    stats['object_count']  # 個数
+                    f"{stats['total_area']:.2f}",
+                    f"{stats['total_length']:.2f}",
+                    stats['object_count']
                 ]
-                writer.writerow(row)  # 行を書き込む
+                writer.writerow(row)
 
         print(f"CSVファイルが保存されました: {file_name}")
     except Exception as e:

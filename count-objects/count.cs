@@ -42,7 +42,7 @@ public class ScriptInstance
         var layers = RhinoDoc.ActiveDoc.Layers;
         if (layers.Count == 0)
         {
-            Console.WriteLine("レイヤーが存在しません。");
+            RhinoApp.WriteLine("レイヤーが存在しません。");
             return;
         }
 
@@ -66,7 +66,7 @@ public class ScriptInstance
                 var geometry = obj.Geometry;
 
                 if (geometry is Rhino.Geometry.ClippingPlaneSurface){
-                    Console.WriteLine("Clipping PLaneをSkipしました。");
+                    RhinoApp.WriteLine("Clipping PLaneをSkipしました。");
                     continue;
                 } 
                 else if (geometry is Rhino.Geometry.Curve curve)
