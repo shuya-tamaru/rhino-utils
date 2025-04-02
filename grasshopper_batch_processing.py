@@ -68,10 +68,11 @@ def process_ply_files():
             gh.RunSolver(True)
             gh.AssignDataToParameter("point_cloud_guid", None)
 
-            rs.DeleteObject(obj_id)
+            # rs.DeleteObject(obj_id)
 
     print("すべてのファイルの処理が完了しました (100%)")
-    cleanup_grasshopper(gh)
+    gh.AssignDataToParameter("execute", False)
+    # cleanup_grasshopper(gh)
 
 if __name__ == "__main__":
     
