@@ -4,6 +4,7 @@ import rhinoscriptsyntax as rs
 import os
 import System.IO
 import System.Windows.Forms as Forms
+import scriptcontext as sc
 
 def select_file(title="ファイルを選択", filter="Grasshopperファイル (*.gh)|*.gh"):
     dialog = Forms.OpenFileDialog()
@@ -24,6 +25,22 @@ def select_folder(title="フォルダを選択"):
         return dialog.SelectedPath
     return None
 
+def create_sequential_layer(base_name):
+    layer_table = sc.doc.Layers
+    existing_layers = [layer.Name for layer in layer_table]
+    
+    index = 0
+    layer_name = f"{base_name}_{index}"
+        
+    while layer_name in existing_layers:
+        index += 1
+        layer_name = f"{base_name}_{index}"
+
+    layer_index = rs.AddLayer(layer_name)
+    layer_guid = rs.LayerId(layer_name)
+    
+    return layer_guid,layer_name
+
 def initialize_grasshopper():
     gh = Rhino.RhinoApp.GetPlugInObject("Grasshopper")
     gh.LoadEditor()
@@ -32,11 +49,13 @@ def initialize_grasshopper():
     gh.OpenDocument(gh_file_path)
     return gh
 
+
 def cleanup_grasshopper(gh):
     gh.CloseAllDocuments()
 
 def process_ply_files():
     gh = initialize_grasshopper()
+    layer_guid, layer_name = create_sequential_layer("point_cloud")
     
     ply_files = [os.path.join(point_clouds_dir, f) for f in os.listdir(point_clouds_dir) 
                 if f.lower().endswith('.ply')]
@@ -62,6 +81,8 @@ def process_ply_files():
                 obj_id = imported_obj[0]
             else:
                 obj_id = imported_obj
+
+            rs.ObjectLayer(obj_id, layer_name)
                 
             gh.AssignDataToParameter("execute", True)
             gh.AssignDataToParameter("point_cloud_guid", obj_id)
